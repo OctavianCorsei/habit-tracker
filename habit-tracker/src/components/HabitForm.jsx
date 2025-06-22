@@ -1,4 +1,5 @@
-function HabitForm({ habit, setHabit, onSubmit }) {
+function HabitForm({ habit, setHabit, frequency, setFrequency, onSubmit }) {
+    const isValid = habit.trim() !== "" && frequency !== "";
     return (
         <form onSubmit={onSubmit}>
             <input
@@ -7,7 +8,14 @@ function HabitForm({ habit, setHabit, onSubmit }) {
                 placeholder="Enter a habit" 
             />
             <br />
-            <button type="submit">Add Habit</button>
+            <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
+                <option value="">-- Select Frequency --</option>
+                <option value="Daily"   >Daily</option>
+                <option value="Weekly"  >Weekly</option>
+                <option value="Biweekly">Biweekly</option>
+            </select>
+            <br />
+            <button type="submit" disabled={!isValid}>Add Habit</button>
         </form>
     );
 }
