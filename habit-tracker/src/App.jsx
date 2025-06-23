@@ -21,6 +21,20 @@ function App() {
       .catch((err) => console.error("Failed to fetch habits:", err));
   }, []);
 
+  //handle marked as done
+  const handleCheckIn = (habitId) => {
+    fetch(`http://127.0.0.1:5000/habits/${habitId}/checkin`, {
+      method: "POST",
+    })
+      .then((res) => res.json())
+      .then((updatedHabit) => {
+        setHabits((prev) =>
+          prev.map((h) => (h.id === updatedHabit.id ? updatedHabit : h))
+        );
+      })
+      .catch((err) => console.log("checkIn failed", err));
+  };
+
   //when the form is submitted: 
   const handleSubmit = (e) => {
     e. preventDefault(); // do not refresh the page
@@ -58,7 +72,7 @@ function App() {
         frequency={frequency}
         setFrequency={setFrequency}
         onSubmit={handleSubmit} />
-      <HabitList habits={habits} />
+      <HabitList habits={habits} onCheckIn={handleCheckIn}/>
     </div>
   );
 }

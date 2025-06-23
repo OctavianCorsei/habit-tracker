@@ -1,6 +1,6 @@
 import Habit from "./Habit";
 
-function HabitList({ habits }) {
+function HabitList({ habits, onCheckIn }) {
     return (
         <ul>
             {habits.map((h) => (
@@ -10,6 +10,8 @@ function HabitList({ habits }) {
                         id={h.id}
                         frequency={h.frequency}
                         streak={h.streak}
+                        checkIns={h.checkIns}
+                        onCheckIn = {onCheckIn}
                 />
                 </li>
             ))}

@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from sqlalchemy.orm.attributes import flag_modified 
+from datetime import datetime, date
 
 app = Flask(__name__)
 CORS(app) #this allows requests from the react frontend
@@ -51,8 +52,28 @@ def add_habit():
     db.session.commit()
     return jsonify(habit.to_dict()), 201
 
-if __name__ == "__main__":
-    app.run(debug=True)
+@app.route("/habits/<habit_id>/checkin", methods=["POST"])
+def checkin_habit(habit_id):
+    habit = db.session.get(Habit, habit_id)
+    if not habit:
+        return jsonify({"error": "Habit not found"}), 404
 
-with app.app_context():
-    db.create_all()
+    today = date.today().isoformat()
+
+    if habit.check_ins is None:
+        habit.check_ins = []
+    
+    if today in habit.check_ins:
+        return jsonify({"message": "already done today"}), 200
+    
+    habit.check_ins.append(today)
+    print(f"added {habit.check_ins}")
+    flag_modified(habit, "check_ins")
+    db.session.commit()
+
+    return jsonify(habit.to_dict()), 200
+
+if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
